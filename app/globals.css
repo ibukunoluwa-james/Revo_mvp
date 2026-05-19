@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/*
+ * RevenueGuard design tokens.
+ * Tailwind v4 reads custom colours straight from @theme — every token below
+ * is usable as bg-/text-/border-rg-* utilities throughout the app.
+ */
+@theme {
+  --color-rg-navy: #0a2342; /* sidebar, primary buttons, headers */
+  --color-rg-navy-mid: #0f2035; /* sidebar hover states */
+  --color-rg-blue: #1d6fa4; /* info accents, stat bar (agents) */
+  --color-rg-teal: #0d7377; /* success, synced, live indicator */
+  --color-rg-teal-light: #1abfbf; /* teal text on dark backgrounds */
+  --color-rg-gold: #c9a84c; /* brand accent, sidebar logo, active nav */
+  --color-rg-gold-text: #7a5c10; /* gold text on white backgrounds */
+  --color-rg-gold-bg: #faf6ec; /* gold tinted card backgrounds */
+  --color-rg-gold-border: #e8d8a5; /* gold card borders */
+  --color-rg-orange: #c55a11; /* warning, flags, anomalies */
+  --color-rg-orange-bg: #fdf3eb; /* orange tinted alert backgrounds */
+  --color-rg-page: #f7f9fb; /* main content area background */
+  --color-rg-border: #dde1e7; /* default card and input borders */
+  --color-rg-border-light: #eef0f3; /* table row dividers */
+  --color-rg-text-primary: #0f1923; /* headings and body copy */
+  --color-rg-text-secondary: #4a5568; /* secondary labels */
+  --color-rg-text-muted: #8f99a5; /* hints, timestamps, labels */
+
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", monospace;
+}
+
+body {
+  background: var(--color-rg-page);
+  color: var(--color-rg-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Shared form input styling referenced as className="field-input". */
+.field-input {
+  width: 100%;
+  background: var(--color-rg-page);
+  border: 1px solid var(--color-rg-border);
+  border-radius: 8px;
+  padding: 0.625rem 0.75rem;
+  font-size: 14px;
+  color: var(--color-rg-text-primary);
+  outline: none;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.field-input:focus {
+  border-color: var(--color-rg-blue);
+  background: #ffffff;
+}
+
+.field-input::placeholder {
+  color: var(--color-rg-text-muted);
+}
