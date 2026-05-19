@@ -13,7 +13,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RevenueGuard",
+  title: "Revo",
+  icon: "/favicon.png",
   description: "Nigeria's revenue intelligence platform",
 };
 
