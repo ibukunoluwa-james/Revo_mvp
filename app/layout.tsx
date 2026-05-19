@@ -14,7 +14,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Revo",
-  icon: "/favicon.png",
+  icons: {
+    icon: "/favicon.png",
+  },
   description: "Nigeria's revenue intelligence platform",
 };
 
