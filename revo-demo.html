@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revo · Smart Challenge 2026 · GovTech Category</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --canvas:#F7F6F2; --canvas2:#EEECEA; --white:#FFFFFF;
+  --ink:#0D1B2A; --ink2:#1C2F45; --ink3:#2C3E50;
+  --ink-soft:#4A5568; --ink-faint:#8492A6; --ink-ghost:#B8C4D0;
+  --gold:#B8973A; --gold2:#D4AE54; --gold-light:#FBF5E6; --gold-line:rgba(184,151,58,0.18);
+  --emerald:#0C7A55; --em-bg:#E6F5F0; --em-line:#A8D5C5;
+  --amber:#8C5E00; --am-bg:#FDF3DC; --am-line:#E8C96A;
+  --crimson:#8B1D1D; --cr-bg:#FBEAEA; --cr-line:#DBA8A8;
+  --sapphire:#0E4D8A; --sa-bg:#E8F2FC; --sa-line:#A8C8F0;
+  --border:#E2DDD6; --border2:#D0CAC0;
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--canvas);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── TOPBAR ─────────────────────────────────── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:400;height:52px;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+.logo{display:flex;align-items:center}
+.logo-word{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:#fff;letter-spacing:3px}
+.logo-dot{width:5px;height:5px;border-radius:50%;background:var(--gold2);margin:0 3px 1px}
+.logo-tag{font-size:9px;font-weight:500;letter-spacing:0.13em;color:rgba(255,255,255,0.32);text-transform:uppercase;margin-left:14px;padding-left:14px;border-left:1px solid rgba(255,255,255,0.1)}
+.pips{display:flex;align-items:center;gap:7px}
+.pip{height:3px;border-radius:2px;background:rgba(255,255,255,0.14);transition:all 0.35s cubic-bezier(.4,0,.2,1);width:22px}
+.pip.done{background:rgba(184,151,58,0.45)}
+.pip.active{background:var(--gold2);width:34px}
+.pip-ct{font-size:9.5px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-left:5px;letter-spacing:0.05em}
+
+/* ── STORY BAR ──────────────────────────────── */
+.storybar{position:fixed;top:52px;left:0;right:0;z-index:399;height:70px;background:var(--ink2);border-bottom:1.5px solid var(--gold-line);display:flex;align-items:center;padding:0 22px;gap:16px;overflow:hidden}
+.s-label{font-family:'Playfair Display',serif;font-style:italic;font-size:10.5px;font-weight:500;color:var(--gold2);letter-spacing:0.07em;white-space:nowrap;flex-shrink:0;text-transform:uppercase}
+.s-sep{width:1px;height:26px;background:rgba(255,255,255,0.09);flex-shrink:0}
+.s-text{font-size:12px;font-weight:300;color:rgba(255,255,255,0.7);line-height:1.5;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.s-text strong{font-weight:600;color:rgba(255,255,255,0.95)}
+
+/* ── ARENA ──────────────────────────────────── */
+.arena{position:fixed;top:122px;bottom:62px;left:0;right:0;display:grid;grid-template-columns:1fr 1.2fr}
+.lane{display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.lane.left{background:var(--ink);border-right:1px solid rgba(255,255,255,0.05)}
+.lane.right{background:var(--canvas)}
+.lane-lbl{flex-shrink:0;padding:9px 18px 0;font-size:8.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.lane.left .lane-lbl{color:rgba(255,255,255,0.2)}
+.lane.right .lane-lbl{color:var(--ink-ghost)}
+
+/* ── PHONE ──────────────────────────────────── */
+.phone-stage{flex:1;display:flex;justify-content:center;align-items:center;padding:10px 22px 18px;min-height:0;overflow:hidden}
+.phone{width:238px;background:var(--white);border-radius:30px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;box-shadow:0 0 0 5px rgba(255,255,255,0.03),0 28px 72px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.25)}
+.ph-bar{background:var(--ink);padding:10px 15px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06)}
+.ph-brand{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;letter-spacing:3px;color:var(--gold2)}
+.ph-id{font-size:8px;color:rgba(255,255,255,0.28);font-family:'JetBrains Mono',monospace;letter-spacing:0.07em}
+.ph-body{background:var(--white);padding:13px;min-height:330px}
+.scr{display:none;animation:scr-in 0.28s ease both}
+.scr.on{display:block}
+@keyframes scr-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* Idle screen */
+.idle{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:38px 0 30px;text-align:center}
+.idle-logo{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;letter-spacing:6px;color:var(--ink);margin-bottom:4px}
+.idle-state{font-size:8.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;margin-bottom:12px}
+.idle-rule{width:26px;height:1.5px;background:var(--gold-line);margin:0 auto 12px}
+.idle-tag{font-family:'Playfair Display',serif;font-style:italic;font-size:11.5px;color:var(--ink-soft);line-height:1.65;padding:0 6px}
+
+/* PIN screen */
+.pin-head{font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:var(--ink-soft);text-align:center;margin:6px 0 13px}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin-bottom:17px}
+.pd{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--border2);transition:all 0.18s}
+.pd.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(184,151,58,0.3)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.kk{background:var(--canvas);border:1px solid var(--border);border-radius:8px;padding:9px;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;text-align:center;color:var(--ink);transition:all 0.12s;cursor:default}
+.kk.hi{background:var(--ink);color:var(--white);transform:scale(0.96)}
+
+/* Collect screen */
+.col-hd{margin-bottom:11px}
+.col-who{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:1px}
+.col-where{font-size:8.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:3px 9px;border-radius:99px;font-size:8.5px;font-weight:500;border:1px solid var(--border2);background:transparent;color:var(--ink-soft);letter-spacing:0.03em;cursor:default}
+.chip.sel{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.f-lbl{font-size:8.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:3px;font-family:'JetBrains Mono',monospace}
+.amt-box{background:var(--canvas);border:1.5px solid var(--border2);border-radius:8px;padding:9px 12px;display:flex;align-items:baseline;gap:4px;margin-bottom:9px;transition:border-color 0.2s}
+.amt-box.active{border-color:var(--gold)}
+.amt-sym{font-size:10px;color:var(--ink-soft);font-family:'JetBrains Mono',monospace}
+.amt-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1}
+.amt-cursor{display:inline-block;width:2px;height:22px;background:var(--gold);margin-left:2px;vertical-align:middle;animation:blink-cur 0.8s step-end infinite}
+@keyframes blink-cur{0%,100%{opacity:1}50%{opacity:0}}
+.t-field{width:100%;padding:7px 10px;background:var(--canvas);border:1.5px solid var(--border2);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink);margin-bottom:10px}
+.go-btn{width:100%;padding:10px;background:var(--ink);color:var(--white);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform 0.1s,box-shadow 0.1s;box-shadow:0 2px 8px rgba(13,27,42,0.18)}
+.go-btn.pressed{transform:scale(0.97);box-shadow:0 1px 3px rgba(13,27,42,0.12)}
+
+/* Success screen */
+.suc{text-align:center;padding:3px 0}
+.suc-ring{width:46px;height:46px;border-radius:50%;background:var(--em-bg);border:1.5px solid var(--em-line);display:flex;align-items:center;justify-content:center;margin:0 auto 9px;animation:pop-in 0.4s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop-in{from{transform:scale(0.4);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-svg{width:19px;height:19px;stroke:var(--emerald);stroke-width:2.5;fill:none;stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.5s 0.2s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.suc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.suc-sub{font-size:9.5px;color:var(--ink-soft);margin-bottom:10px;letter-spacing:0.03em}
+.sms-card{background:var(--em-bg);border:1px solid var(--em-line);border-radius:9px 9px 9px 3px;padding:8px 10px;text-align:left;margin-bottom:9px;animation:slide-sms 0.4s 0.15s ease both;transform-origin:left}
+@keyframes slide-sms{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.sms-from{font-size:7.5px;color:var(--emerald);font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:0.1em;margin-bottom:3px}
+.sms-msg{font-size:8.5px;color:var(--emerald);line-height:1.5}
+.rcpt{background:var(--canvas);border:1px solid var(--border);border-radius:7px;padding:8px 10px}
+.rr{display:flex;justify-content:space-between;padding:2px 0}
+.rr:not(:last-child){border-bottom:1px solid var(--border)}
+.rl{font-size:8px;color:var(--ink-faint)}
+.rv{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:500;color:var(--ink)}
+
+/* Fraud screen */
+.fraud{text-align:center;padding:8px 0 6px}
+.fraud-ring{width:46px;height:46px;border-radius:50%;background:var(--am-bg);border:1.5px solid var(--am-line);display:flex;align-items:center;justify-content:center;font-size:19px;margin:0 auto 8px;animation:pulse-ring 1.5s ease infinite}
+@keyframes pulse-ring{0%,100%{box-shadow:0 0 0 0 rgba(140,94,0,0.3)}60%{box-shadow:0 0 0 8px rgba(140,94,0,0)}}
+.fraud-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.fraud-id{font-size:8.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;margin-bottom:9px}
+.fraud-alert{background:var(--cr-bg);border:1px solid var(--cr-line);border-radius:7px;padding:7px 9px;font-size:8.5px;color:var(--crimson);line-height:1.55;margin-top:7px}
+
+/* Impact screen */
+.imp-hed{font-family:'Playfair Display',serif;font-style:italic;font-size:12px;font-weight:500;color:var(--gold);margin-bottom:10px;border-bottom:1px solid var(--gold-line);padding-bottom:7px}
+.imp-cards{display:flex;flex-direction:column;gap:6px}
+.imp-card{border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;border:1px solid;animation:pop-card 0.5s cubic-bezier(.2,1.2,.4,1) both}
+.imp-card:nth-child(1){animation-delay:0.05s}
+.imp-card:nth-child(2){animation-delay:0.15s}
+.imp-card:nth-child(3){animation-delay:0.25s}
+@keyframes pop-card{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.imp-card.e{background:var(--em-bg);border-color:var(--em-line)}
+.imp-card.s{background:var(--sa-bg);border-color:var(--sa-line)}
+.imp-card.a{background:var(--am-bg);border-color:var(--am-line)}
+.imp-ico{font-size:17px;flex-shrink:0}
+.imp-big{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.imp-sm{font-size:8.5px;color:var(--ink-soft)}
+.imp-foot{margin-top:9px;padding-top:7px;border-top:1px solid var(--border);font-size:8.5px;color:var(--ink-faint);line-height:1.65;font-family:'JetBrains Mono',monospace}
+
+/* ── DASHBOARD ──────────────────────────────── */
+.dash{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 18px 18px;min-height:0}
+.dash::-webkit-scrollbar{width:3px}
+.dash::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.dash-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid var(--canvas2)}
+.dash-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:2px}
+.dash-sub{font-size:9px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em}
+.live-chip{display:flex;align-items:center;gap:5px;background:var(--em-bg);border:1px solid var(--em-line);padding:4px 9px;border-radius:99px;font-size:8.5px;font-weight:600;color:var(--emerald);letter-spacing:0.07em;flex-shrink:0;margin-top:2px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:pulse-dot 1.8s ease infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.3;transform:scale(0.75)}}
+
+/* Metric grid */
+.mets{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:12px}
+.mc{background:var(--white);border:1px solid var(--border);border-radius:9px;padding:11px 13px;position:relative;overflow:hidden;transition:box-shadow 0.2s}
+.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--canvas2);transition:background 0.5s,width 0.5s}
+.mc.flash::before{background:var(--gold2)}
+.mc-lbl{font-size:8.5px;font-weight:600;letter-spacing:0.1em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:5px;font-family:'JetBrains Mono',monospace}
+.mc-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:3px}
+.mc-val.warn{color:var(--amber)}
+.mc-note{font-size:9.5px;color:var(--ink-faint)}
+.mc-note.pos{color:var(--emerald);font-weight:500}
+.mc-note.neg{color:var(--amber);font-weight:500}
+
+/* Chart */
+.chart-wrap{background:var(--white);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:12px}
+.chart-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chart-title{font-size:8.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);font-family:'JetBrains Mono',monospace}
+.chart-total{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink)}
+.bars{display:flex;align-items:flex-end;gap:5px;height:60px}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end}
+.bar-fill{width:100%;border-radius:3px 3px 0 0;transition:height 1s cubic-bezier(.4,0,.2,1);min-height:2px}
+.bar-lbl{font-size:7px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;margin-top:4px;letter-spacing:0.04em}
+
+/* Alert card */
+.alert-card{background:var(--am-bg);border:1px solid var(--am-line);border-left:3px solid var(--amber);border-radius:8px;padding:10px 12px;margin-bottom:11px;display:none;gap:9px;align-items:flex-start;animation:slide-alert 0.4s ease both}
+.alert-card.show{display:flex}
+@keyframes slide-alert{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.al-ico{font-size:13px;color:var(--amber);flex-shrink:0;margin-top:1px;animation:wobble 0.5s ease both}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.al-title{font-size:10.5px;font-weight:600;color:var(--amber);margin-bottom:3px}
+.al-body{font-size:9.5px;color:var(--ink-soft);line-height:1.55}
+
+/* Agent rank table */
+.rank-wrap{background:var(--white);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:11px;display:none}
+.rank-wrap.show{display:block}
+.rank-row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid var(--border)}
+.rank-row:last-child{border-bottom:none}
+.rank-row.flagged{background:var(--cr-bg)}
+.rank-num{font-size:8.5px;font-weight:600;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;width:16px;flex-shrink:0}
+.rank-bar-wrap{flex:1;height:5px;background:var(--canvas2);border-radius:3px;overflow:hidden;margin:0 8px}
+.rank-bar-fill{height:100%;border-radius:3px;transition:width 0.9s cubic-bezier(.4,0,.2,1)}
+.rank-name{font-size:10px;font-weight:500;color:var(--ink);width:70px;flex-shrink:0}
+.rank-amt{font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--ink);flex-shrink:0}
+.rank-flag{font-size:9px;margin-left:4px}
+
+/* Feed */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sec-title{font-size:8.5px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:var(--ink-faint);font-family:'JetBrains Mono',monospace}
+.sec-ct{font-size:8.5px;color:var(--ink-ghost);font-family:'JetBrains Mono',monospace}
+.feed-wrap{background:var(--white);border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.feed-empty{padding:16px;text-align:center;font-size:10px;color:var(--ink-ghost);font-family:'JetBrains Mono',monospace;letter-spacing:0.05em}
+.txn{display:flex;align-items:center;gap:9px;padding:8px 12px;border-bottom:1px solid var(--border);animation:scr-in 0.3s ease}
+.txn:last-child{border-bottom:none}
+.txn-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.txn-dot.ok{background:var(--emerald);box-shadow:0 0 0 3px var(--em-bg)}
+.txn-dot.fl{background:var(--amber);box-shadow:0 0 0 3px var(--am-bg)}
+.txn-info{flex:1;min-width:0}
+.txn-who{font-size:10.5px;font-weight:500;color:var(--ink)}
+.txn-what{font-size:8.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;margin-top:1px}
+.txn-amt{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--ink);margin-left:auto;flex-shrink:0}
+.txn-when{font-size:8.5px;color:var(--ink-ghost);font-family:'JetBrains Mono',monospace;margin-left:7px;flex-shrink:0}
+
+/* ── CONTROL BAR ────────────────────────────── */
+.ctrl{position:fixed;bottom:0;left:0;right:0;z-index:400;height:62px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;box-shadow:0 -3px 16px rgba(13,27,42,0.05)}
+.cb{padding:8px 17px;border-radius:7px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.06em;cursor:pointer;border:1.5px solid;transition:all 0.13s;display:flex;align-items:center;gap:5px;text-transform:uppercase}
+.cb-primary{background:var(--ink);color:var(--white);border-color:var(--ink);box-shadow:0 2px 8px rgba(13,27,42,0.15)}
+.cb-primary:hover{background:var(--ink2)}
+.cb-ghost{background:transparent;color:var(--ink-soft);border-color:var(--border2)}
+.cb-ghost:hover{border-color:var(--ink3);color:var(--ink)}
+.cb-ghost:disabled{opacity:0.28;cursor:not-allowed}
+.prog-rail{flex:1;max-width:110px;height:2px;background:var(--canvas2);border-radius:1px}
+.prog-fill{height:100%;background:var(--gold);border-radius:1px;transition:width 0.4s cubic-bezier(.4,0,.2,1)}
+.spd-btn{font-size:8.5px;font-weight:500;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;background:none;border:1px solid var(--border2);border-radius:5px;padding:4px 8px;cursor:pointer;transition:all 0.12s}
+.spd-btn:hover{color:var(--ink);border-color:var(--ink3)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="logo">
+    <span class="logo-word">REVO</span>
+    <div class="logo-dot"></div>
+    <span class="logo-tag">Smart Challenge 2026 &nbsp;·&nbsp; GovTech Category &nbsp;·&nbsp; Covenant University</span>
+  </div>
+  <div class="pips">
+    <div class="pip" id="pip0"></div><div class="pip" id="pip1"></div>
+    <div class="pip" id="pip2"></div><div class="pip" id="pip3"></div>
+    <div class="pip" id="pip4"></div><div class="pip" id="pip5"></div>
+    <span class="pip-ct" id="pip-ct">01 / 06</span>
+  </div>
+</header>
+
+<!-- STORY BAR -->
+<div class="storybar">
+  <div class="s-label" id="s-label">—</div>
+  <div class="s-sep"></div>
+  <div class="s-text" id="s-text">Loading…</div>
+</div>
+
+<!-- ARENA -->
+<main class="arena">
+
+  <!-- LEFT: Phone -->
+  <div class="lane left">
+    <div class="lane-lbl">◈ &nbsp;Agent view · Field collection app</div>
+    <div class="phone-stage">
+      <div class="phone">
+        <div class="ph-bar">
+          <div class="ph-brand">REVO</div>
+          <div class="ph-id" id="ph-id">—</div>
+        </div>
+        <div class="ph-body">
+
+          <div class="scr on" id="scr-idle">
+            <div class="idle">
+              <div class="idle-logo">REVO</div>
+              <div class="idle-state">Taraba State SIRS</div>
+              <div class="idle-rule"></div>
+              <div class="idle-tag">Every naira collected.<br>Every naira accounted for.</div>
+            </div>
+          </div>
+
+          <div class="scr" id="scr-pin">
+            <div class="pin-head">Enter your secure PIN</div>
+            <div class="pin-dots">
+              <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+              <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+            </div>
+            <div class="keypad">
+              <div class="kk">1</div><div class="kk">2</div><div class="kk">3</div>
+              <div class="kk">4</div><div class="kk" id="kk5">5</div><div class="kk">6</div>
+              <div class="kk">7</div><div class="kk">8</div><div class="kk">9</div>
+              <div class="kk"></div><div class="kk">0</div><div class="kk" style="font-size:12px">⌫</div>
+            </div>
+          </div>
+
+          <div class="scr" id="scr-col">
+            <div class="col-hd">
+              <div class="col-who" id="col-who">Hello, Chinelo</div>
+              <div class="col-where" id="col-where">Jalingo Main Market · Zone 3</div>
+            </div>
+            <div class="chips">
+              <div class="chip" id="ch-ml">Market levy</div>
+              <div class="chip" id="ch-mp">Motor park</div>
+              <div class="chip" id="ch-pf">Permit</div>
+            </div>
+            <div class="f-lbl">Amount collected</div>
+            <div class="amt-box" id="amt-box">
+              <span class="amt-sym">₦</span>
+              <span class="amt-num" id="amt-num">0</span>
+              <span class="amt-cursor" id="amt-cur"></span>
+            </div>
+            <div class="f-lbl">Payer phone number</div>
+            <input class="t-field" id="t-phone" value="" readonly />
+            <button class="go-btn" id="go-btn">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><polyline points="1,5.5 4.5,9 10,2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Confirm collection
+            </button>
+          </div>
+
+          <div class="scr" id="scr-ok">
+            <div class="suc">
+              <div class="suc-ring">
+                <svg class="suc-svg" viewBox="0 0 24 24"><polyline points="4,12 9,17 20,6"/></svg>
+              </div>
+              <div class="suc-title">Collection recorded</div>
+              <div class="suc-sub">SMS receipt sent instantly</div>
+              <div class="sms-card">
+                <div class="sms-from">REVO-TARABA</div>
+                <div class="sms-msg" id="sms-msg">—</div>
+              </div>
+              <div class="rcpt">
+                <div class="rr"><span class="rl">Receipt</span><span class="rv" id="r-id">—</span></div>
+                <div class="rr"><span class="rl">Amount</span><span class="rv" id="r-amt">—</span></div>
+                <div class="rr"><span class="rl">Type</span><span class="rv" id="r-type">—</span></div>
+                <div class="rr"><span class="rl">Payer</span><span class="rv" id="r-payer">—</span></div>
+                <div class="rr"><span class="rl">Agent</span><span class="rv" id="r-agent">—</span></div>
+                <div class="rr"><span class="rl">Time</span><span class="rv" id="r-time">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scr" id="scr-fraud">
+            <div class="fraud">
+              <div class="fraud-ring">⚠</div>
+              <div class="fraud-name">Agent AGT-007</div>
+              <div class="fraud-id">Haruna M. · Zone 5</div>
+            </div>
+            <div class="rcpt" style="margin-bottom:8px">
+              <div class="rr"><span class="rl">Recorded today</span><span class="rv" style="color:var(--crimson)">₦8,400</span></div>
+              <div class="rr"><span class="rl">Zone 5 expected</span><span class="rv">₦29,000</span></div>
+              <div class="rr"><span class="rl">Shortfall</span><span class="rv" style="color:var(--crimson)">−₦20,600 (71%)</span></div>
+              <div class="rr"><span class="rl">Receipts issued</span><span class="rv">12 of est. 47</span></div>
+            </div>
+            <div class="fraud-alert">ML flag: selective non-recording consistent with systematic skimming. Commissioner alert triggered. Full audit trail preserved for prosecution.</div>
+          </div>
+
+          <div class="scr" id="scr-impact">
+            <div class="imp-hed">₦9 billion recovered annually enables:</div>
+            <div class="imp-cards">
+              <div class="imp-card e"><div class="imp-ico">📚</div><div><div class="imp-big">15,000 teachers</div><div class="imp-sm">Primary schools staffed, SDG 4</div></div></div>
+              <div class="imp-card s"><div class="imp-ico">🏥</div><div><div class="imp-big">180 health centres</div><div class="imp-sm">Rehabilitated at ₦50M each, SDG 3</div></div></div>
+              <div class="imp-card a"><div class="imp-ico">🛣️</div><div><div class="imp-big">90 km of roads</div><div class="imp-sm">Rural access, ₦100M per km, SDG 9</div></div></div>
+            </div>
+            <div class="imp-foot">From money already being collected —<br>just never reaching the treasury.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Dashboard -->
+  <div class="lane right">
+    <div class="lane-lbl">◈ &nbsp;Commissioner view · State revenue intelligence</div>
+    <div class="dash">
+
+      <div class="dash-hd">
+        <div>
+          <div class="dash-title">Taraba State SIRS</div>
+          <div class="dash-sub">Live Revenue Intelligence · 15 May 2026</div>
+        </div>
+        <div class="live-chip"><div class="live-dot"></div>Live</div>
+      </div>
+
+      <div class="mets">
+        <div class="mc" id="mc-tot"><div class="mc-lbl">Today's collections</div><div class="mc-val" id="mv-tot">₦0</div><div class="mc-note pos" id="mn-tot">No data yet</div></div>
+        <div class="mc" id="mc-tx"><div class="mc-lbl">Transactions</div><div class="mc-val" id="mv-tx">0</div><div class="mc-note" id="mn-tx">Since 07:00 AM</div></div>
+        <div class="mc" id="mc-ag"><div class="mc-lbl">Active agents</div><div class="mc-val" id="mv-ag">0<span style="font-size:14px;color:var(--ink-ghost);font-weight:400"> /24</span></div><div class="mc-note" id="mn-ag">All offline</div></div>
+        <div class="mc" id="mc-fl"><div class="mc-lbl">Anomaly flags</div><div class="mc-val" id="mv-fl">0</div><div class="mc-note" id="mn-fl">None detected</div></div>
+      </div>
+
+      <!-- Hourly bar chart -->
+      <div class="chart-wrap" id="chart-wrap" style="display:none">
+        <div class="chart-hd">
+          <span class="chart-title">Hourly collections</span>
+          <span class="chart-total" id="chart-total">₦0</span>
+        </div>
+        <div class="bars" id="bars-container"></div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert-card" id="alert-card">
+        <div class="al-ico">⚠</div>
+        <div>
+          <div class="al-title">AGT-007 · Haruna M. · Zone 5 · Flagged</div>
+          <div class="al-body">Collections 71% below zone average in last 2 hours (₦8,400 vs expected ₦29,000). Pattern consistent with selective non-recording. Immediate review recommended.</div>
+        </div>
+      </div>
+
+      <!-- Agent rankings (scene 5 only) -->
+      <div class="rank-wrap" id="rank-wrap">
+        <div class="rank-row" style="background:var(--canvas2)">
+          <span class="rank-num" style="color:var(--ink-faint);font-size:8px;font-weight:700;letter-spacing:0.1em;width:auto;font-family:'JetBrains Mono',monospace">AGENT PERFORMANCE TODAY</span>
+        </div>
+        <div class="rank-row"><span class="rank-num">1</span><span class="rank-name">Chinelo A.</span><div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:100%;background:var(--emerald)"></div></div><span class="rank-amt">₦94,000</span></div>
+        <div class="rank-row"><span class="rank-num">2</span><span class="rank-name">Bello K.</span><div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:83%;background:var(--emerald)"></div></div><span class="rank-amt">₦78,000</span></div>
+        <div class="rank-row"><span class="rank-num">3</span><span class="rank-name">Fatima A.</span><div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:74%;background:var(--emerald)"></div></div><span class="rank-amt">₦70,000</span></div>
+        <div class="rank-row"><span class="rank-num">4</span><span class="rank-name">Yusuf T.</span><div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:66%;background:var(--emerald)"></div></div><span class="rank-amt">₦62,000</span></div>
+        <div class="rank-row flagged"><span class="rank-num">18</span><span class="rank-name">Haruna M.</span><div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:9%;background:var(--crimson)"></div></div><span class="rank-amt" style="color:var(--crimson)">₦8,400</span><span class="rank-flag">⚠</span></div>
+      </div>
+
+      <div class="sec-hd"><span class="sec-title">Transaction feed</span><span class="sec-ct" id="feed-ct">—</span></div>
+      <div class="feed-wrap" id="feed"><div class="feed-empty">Awaiting first collections…</div></div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- CONTROLS -->
+<nav class="ctrl">
+  <button class="cb cb-ghost" id="btn-prev" onclick="prev()" disabled>← Prev</button>
+  <div class="prog-rail"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  <button class="cb cb-primary" id="btn-play" onclick="togglePlay()">▶ &nbsp;Auto-play</button>
+  <div class="prog-rail"><div class="prog-fill" id="prog2" style="width:0%"></div></div>
+  <button class="cb cb-ghost" id="btn-next" onclick="next()">Next →</button>
+  <button class="spd-btn" id="spd-btn" onclick="cycleSpd()">1× speed</button>
+</nav>
+
+<script>
+// ── Chart data ────────────────────────────────
+const HOURS=['07','08','09','10','11','12'];
+const CHART_VALS=[42000,118000,210000,185000,167000,125000];
+const CHART_MAX=Math.max(...CHART_VALS);
+const CHART_COLORS=['#0C7A55','#0C7A55','#0C7A55','#8C5E00','#0C7A55','#0C7A55'];
+
+function buildChart(){
+  const container=document.getElementById('bars-container');
+  container.innerHTML=HOURS.map((h,i)=>`
+    <div class="bar-col">
+      <div class="bar-fill" id="bar${i}" style="height:0%;background:${CHART_COLORS[i]}"></div>
+      <div class="bar-lbl">${h}h</div>
+    </div>`).join('');
+  setTimeout(()=>{
+    CHART_VALS.forEach((_,i)=>{
+      const pct=Math.round((CHART_VALS[i]/CHART_MAX)*100);
+      document.getElementById('bar'+i).style.height=pct+'%';
+    });
+  },80);
+}
+
+// ── Scenes ────────────────────────────────────
+const SCENES=[
+  {
+    id:'Scene I', label:'The problem',
+    story:'Jalingo, Taraba State. A revenue agent collects <strong>₦180,000</strong> from market traders. He remits <strong>₦40,000</strong> to the state treasury. The remaining ₦140,000 vanishes — no receipt, no trail, no proof. Across 21 Nigerian states, this happens every single day. Revo is the infrastructure that ends it.',
+    phone:'scr-idle', tag:'—',
+    d:{tot:'₦0',tx:'0',ag:'0',fl:'0',fnote:'None detected',tnote:'No collections yet',txnote:'Since 07:00 AM',agnote:'All offline',warn:false},
+    anomaly:false,chart:false,rank:false,feed:[]
+  },
+  {
+    id:'Scene II', label:'Agent logs in',
+    story:'Agent Chinelo Adaeze — Zone 3, Jalingo Main Market — opens Revo on her Android phone and enters her <strong>4-digit PIN</strong>. The system authenticates her identity, GPS-stamps her location, and links every transaction she makes to her Agent ID in the Taraba State ledger. No cash changes hands without a permanent record.',
+    phone:'scr-pin', tag:'AGT-003',
+    d:{tot:'₦0',tx:'0',ag:'1',fl:'0',fnote:'None detected',tnote:'Agents coming online',txnote:'Since 07:00 AM',agnote:'Zone 3 online',warn:false},
+    anomaly:false,chart:false,rank:false,feed:[]
+  },
+  {
+    id:'Scene III', label:'Collection in progress',
+    story:'A trader pays her ₦2,000 levy. Chinelo selects the revenue type, the amount types itself in — and she taps <strong>Confirm</strong>. In that instant: recorded in the state ledger, a tamper-proof receipt generated, and an SMS dispatched <strong>directly</strong> to the trader — bypassing the agent entirely.',
+    phone:'scr-col', tag:'AGT-003',
+    collect:{who:'Hello, Chinelo',where:'Jalingo Main Market · Zone 3',amt:'2,000',phone:'08012345678',chip:'ml'},
+    d:{tot:'₦0',tx:'0',ag:'1',fl:'0',fnote:'None detected',tnote:'Agent active',txnote:'Since 07:00 AM',agnote:'Zone 3 active',warn:false},
+    anomaly:false,chart:false,rank:false,feed:[]
+  },
+  {
+    id:'Scene IV', label:'SMS receipt & live dashboard',
+    story:'The trader\'s phone receives an SMS from <strong>REVO-TARABA</strong> — not from the agent, directly from government. If Chinelo had recorded ₦0 and pocketed the cash, that SMS would prove the discrepancy immediately. The Commissioner\'s dashboard updates in real time: every naira, every agent, every zone.',
+    phone:'scr-ok', tag:'AGT-003',
+    rec:{id:'RV-20260515-0042',amt:'₦2,000',type:'Market levy',payer:'0801•••5678',agent:'Chinelo A.',time:'09:41 AM',sms:'Your payment of ₦2,000 (Market levy) was received by Taraba SIRS. Receipt: RV-20260515-0042. Not you? Call 080-REVO-TAR.'},
+    d:{tot:'₦847,200',tx:'412',ag:'18',fl:'0',fnote:'None detected',tnote:'↑ +23% vs yesterday',txnote:'Full audit trail',agnote:'18 zones active',warn:false},
+    anomaly:false,chart:true,rank:false,
+    feed:[
+      {ok:true,who:'Chinelo A.',what:'Market levy · Zone 3',amt:'₦2,000',when:'09:41'},
+      {ok:true,who:'Bello K.',what:'Motor park · Zone 1',amt:'₦1,500',when:'09:38'},
+      {ok:true,who:'Fatima A.',what:'Market levy · Zone 4',amt:'₦3,000',when:'09:35'},
+      {ok:true,who:'Yusuf T.',what:'Permit fee · Zone 2',amt:'₦5,000',when:'09:29'},
+    ]
+  },
+  {
+    id:'Scene V', label:'Anomaly detected',
+    story:'Revo\'s ML engine flags <strong>Agent Haruna Musa</strong> — Zone 5. If an agent\'s collections drop more than 40% below their 7-day zone average, Revo flags them automatically. Haruna is 71% below. Without Revo this surfaces — if ever — at month-end audit. Today the Commissioner can act <strong>right now</strong>.',
+    phone:'scr-fraud', tag:'AGT-007',
+    d:{tot:'₦847,200',tx:'412',ag:'18',fl:'2',fnote:'⚠ Needs review',tnote:'↑ +23% vs yesterday',txnote:'Full audit trail',agnote:'18 zones active',warn:true},
+    anomaly:true,chart:true,rank:true,
+    feed:[
+      {ok:false,who:'Haruna M.',what:'Zone 5 · flagged ⚠',amt:'₦8,400',when:'10:14'},
+      {ok:true,who:'Chinelo A.',what:'Market levy · Zone 3',amt:'₦2,000',when:'09:41'},
+      {ok:true,who:'Bello K.',what:'Motor park · Zone 1',amt:'₦1,500',when:'09:38'},
+      {ok:true,who:'Fatima A.',what:'Market levy · Zone 4',amt:'₦3,000',when:'09:35'},
+    ]
+  },
+  {
+    id:'Scene VI', label:'The impact',
+    story:'A 30% improvement in Taraba\'s IGR recovers <strong>₦9 billion annually</strong> — from money already being collected, just never reaching the treasury. Revo is not a payment app. It is the governance infrastructure through which Nigerian states collect what they are already owed — and citizens finally see their levies build the services they deserve.',
+    phone:'scr-impact', tag:'—',
+    d:{tot:'₦847,200',tx:'412',ag:'18',fl:'2',fnote:'2 under review',tnote:'Today · full audit trail',txnote:'All receipts verified',agnote:'18 zones active',warn:true},
+    anomaly:true,chart:true,rank:false,
+    feed:[
+      {ok:false,who:'Haruna M.',what:'Zone 5 · under review',amt:'₦8,400',when:'10:14'},
+      {ok:true,who:'Chinelo A.',what:'Market levy · Zone 3',amt:'₦2,000',when:'09:41'},
+      {ok:true,who:'Bello K.',what:'Motor park · Zone 1',amt:'₦1,500',when:'09:38'},
+      {ok:true,who:'Fatima A.',what:'Market levy · Zone 4',amt:'₦3,000',when:'09:35'},
+    ]
+  }
+];
+
+let cur=0,playing=false,sTimer=null,pinTimer=null,typeTimer=null,speedIdx=0;
+const SPEEDS=[1,1.5,0.6];
+const SLBLS=['1× speed','1.5× speed','0.5× speed'];
+const DURS=[8500,7500,9000,9500,10000,11000];
+
+function render(i){
+  const s=SCENES[i];
+
+  // Pips
+  for(let j=0;j<6;j++){
+    document.getElementById('pip'+j).className='pip'+(j===i?' active':j<i?' done':'');
+  }
+  document.getElementById('pip-ct').textContent=String(i+1).padStart(2,'0')+' / 06';
+
+  // Story
+  document.getElementById('s-label').textContent=s.id;
+  document.getElementById('s-text').innerHTML=s.story;
+
+  // Phone
+  document.querySelectorAll('.scr').forEach(el=>el.classList.remove('on'));
+  document.getElementById(s.phone).classList.add('on');
+  document.getElementById('ph-id').textContent=s.tag;
+
+  clearInterval(pinTimer);clearTimeout(typeTimer);
+
+  if(s.phone==='scr-pin') animPIN();
+
+  if(s.phone==='scr-col'&&s.collect){
+    const c=s.collect;
+    document.getElementById('col-who').textContent=c.who;
+    document.getElementById('col-where').textContent=c.where;
+    document.getElementById('t-phone').value='';
+    document.getElementById('amt-num').textContent='0';
+    document.getElementById('amt-box').classList.remove('active');
+    document.getElementById('go-btn').classList.remove('pressed');
+    ['ml','mp','pf'].forEach(x=>document.getElementById('ch-'+x).classList.remove('sel'));
+    document.getElementById('ch-'+c.chip).classList.add('sel');
+    // Animate: type amount then phone number then press button
+    setTimeout(()=>typeAmount(c.amt,()=>{
+      document.getElementById('amt-box').classList.add('active');
+      setTimeout(()=>typePhone(c.phone,()=>{
+        setTimeout(()=>{
+          document.getElementById('go-btn').classList.add('pressed');
+          setTimeout(()=>document.getElementById('go-btn').classList.remove('pressed'),300);
+        },600);
+      }),400);
+    }),600);
+  }
+
+  if(s.phone==='scr-ok'&&s.rec){
+    const r=s.rec;
+    document.getElementById('r-id').textContent=r.id;
+    document.getElementById('r-amt').textContent=r.amt;
+    document.getElementById('r-type').textContent=r.type;
+    document.getElementById('r-payer').textContent=r.payer;
+    document.getElementById('r-agent').textContent=r.agent;
+    document.getElementById('r-time').textContent=r.time;
+    document.getElementById('sms-msg').textContent=r.sms;
+  }
+
+  // Dashboard metrics
+  const d=s.d;
+  flashMc('mv-tot',d.tot,'mc-tot');
+  document.getElementById('mn-tot').textContent=d.tnote;
+  document.getElementById('mn-tot').className='mc-note pos';
+  flashMc('mv-tx',d.tx,'mc-tx');
+  document.getElementById('mn-tx').textContent=d.txnote;
+  document.getElementById('mv-ag').innerHTML=d.ag+'<span style="font-size:14px;color:var(--ink-ghost);font-weight:400"> /24</span>';
+  document.getElementById('mn-ag').textContent=d.agnote;
+  const fv=document.getElementById('mv-fl');
+  fv.textContent=d.fl;fv.className='mc-val'+(d.warn?' warn':'');
+  const fn=document.getElementById('mn-fl');
+  fn.textContent=d.fnote;fn.className='mc-note'+(d.warn?' neg':'');
+
+  // Alert
+  document.getElementById('alert-card').classList.toggle('show',!!s.anomaly);
+
+  // Chart
+  const cw=document.getElementById('chart-wrap');
+  if(s.chart){
+    cw.style.display='block';
+    document.getElementById('chart-total').textContent='₦847,200';
+    buildChart();
+  } else {
+    cw.style.display='none';
+  }
+
+  // Rankings
+  document.getElementById('rank-wrap').classList.toggle('show',!!s.rank);
+
+  // Feed
+  const feed=document.getElementById('feed');
+  if(s.feed&&s.feed.length>0){
+    feed.innerHTML=s.feed.map(t=>`
+      <div class="txn">
+        <div class="txn-dot ${t.ok?'ok':'fl'}"></div>
+        <div class="txn-info"><div class="txn-who">${t.who}</div><div class="txn-what">${t.what}</div></div>
+        <div class="txn-amt">${t.amt}</div>
+        <div class="txn-when">${t.when}</div>
+      </div>`).join('');
+    document.getElementById('feed-ct').textContent='Latest '+s.feed.length;
+  } else {
+    feed.innerHTML='<div class="feed-empty">Awaiting first collections…</div>';
+    document.getElementById('feed-ct').textContent='—';
+  }
+
+  const pct=(i/(SCENES.length-1))*100;
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('prog2').style.width=pct+'%';
+  document.getElementById('btn-prev').disabled=i===0;
+  document.getElementById('btn-next').disabled=i===SCENES.length-1;
+  cur=i;
+}
+
+function flashMc(valId,val,cardId){
+  const el=document.getElementById(valId);
+  if(el.textContent.trim()!==val){
+    el.textContent=val;
+    const c=document.getElementById(cardId);
+    if(c){c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash')}
+  }
+}
+
+// PIN animation
+let pinStep=0;
+function animPIN(){
+  ['pd0','pd1','pd2','pd3'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('kk5').classList.remove('hi');
+  pinStep=0;
+  pinTimer=setInterval(()=>{
+    if(pinStep<4){
+      document.getElementById('pd'+pinStep).classList.add('on');
+      if(pinStep===0) document.getElementById('kk5').classList.add('hi');
+      else document.getElementById('kk5').classList.remove('hi');
+      pinStep++;
+    } else clearInterval(pinTimer);
+  },350);
+}
+
+// Amount typing animation
+function typeAmount(target,cb){
+  const digits=target.replace(/,/g,'').split('');
+  const el=document.getElementById('amt-num');
+  let built='';let idx=0;
+  function step(){
+    if(idx<digits.length){
+      built+=digits[idx++];
+      el.textContent=parseInt(built,10).toLocaleString();
+      typeTimer=setTimeout(step,120+Math.random()*80);
+    } else {setTimeout(cb,300);}
+  }
+  step();
+}
+
+// Phone number typing animation
+function typePhone(target,cb){
+  const el=document.getElementById('t-phone');
+  let built='';let idx=0;
+  function step(){
+    if(idx<target.length){
+      built+=target[idx++];
+      el.value=built;
+      typeTimer=setTimeout(step,60+Math.random()*60);
+    } else {setTimeout(cb,200);}
+  }
+  step();
+}
+
+// Navigation
+function next(){if(cur<SCENES.length-1)render(cur+1);else stopPlay();}
+function prev(){if(cur>0)render(cur-1);}
+function togglePlay(){playing?stopPlay():startPlay();}
+
+function startPlay(){
+  playing=true;
+  document.getElementById('btn-play').innerHTML='⏸ &nbsp;Pause';
+  schedNext();
+}
+function stopPlay(){
+  playing=false;clearTimeout(sTimer);
+  document.getElementById('btn-play').innerHTML='▶ &nbsp;Auto-play';
+}
+function schedNext(){
+  if(!playing)return;
+  if(cur>=SCENES.length-1){stopPlay();return;}
+  sTimer=setTimeout(()=>{if(playing){next();schedNext();}},DURS[cur]/SPEEDS[speedIdx]);
+}
+function cycleSpd(){
+  speedIdx=(speedIdx+1)%3;
+  document.getElementById('spd-btn').textContent=SLBLS[speedIdx];
+  if(playing){clearTimeout(sTimer);schedNext();}
+}
+
+render(0);
+</script>
+</body>
+</html>
