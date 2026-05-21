@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * RevenueGuard design tokens.
+ * Revo design tokens.
  * Tailwind v4 reads custom colours straight from @theme — every token below
  * is usable as bg-/text-/border-rg-* utilities throughout the app.
  */

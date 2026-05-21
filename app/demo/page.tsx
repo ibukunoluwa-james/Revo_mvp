@@ -8,11 +8,12 @@ type Scene = {
   id: string;
   label: string;
   story: string;
-  phone: 'scr-idle' | 'scr-login' | 'scr-col' | 'scr-ok' | 'scr-fraud' | 'scr-impact';
+  phone: 'scr-idle' | 'scr-login' | 'scr-col' | 'scr-ok' | 'scr-payer' | 'scr-fraud' | 'scr-impact';
   tag: string;
   login?: { phone: string };
   collect?: { who: string; where: string; amt: string; phone: string; chip: StreamName };
   rec?: { id: string; amt: string; type: StreamName; payer: string; time: string; sms: string };
+  payerSms?: { from: string; carrier: string; body: string; when: string };
   flag?: { agent: string; type: StreamName; amt: string };
   d: {
     tot: string; mon: string; ag: string; fl: string;
@@ -51,11 +52,11 @@ const SCENES: Scene[] = [
   },
   {
     id: 'Scene IV', label: 'SMS receipt & live dashboard',
-    story: 'The trader receives an SMS from <strong>RevenueGuard</strong> — not from the agent, directly from the platform. If Fatima had recorded ₦0 and pocketed the cash, that SMS would prove the discrepancy. The commissioner&rsquo;s dashboard updates in real time: every naira, every agent.',
+    story: 'The trader receives an SMS from <strong>Revo</strong> — not from the agent, directly from the platform. If Fatima had recorded ₦0 and pocketed the cash, that SMS would prove the discrepancy. The commissioner&rsquo;s dashboard updates in real time: every naira, every agent.',
     phone: 'scr-ok', tag: 'FY',
     rec: {
       id: 'A3F2B91C', amt: '₦2,000', type: 'Market Levy', payer: '08012345678', time: '09:41 AM',
-      sms: 'RevenueGuard: Payment of N2,000 for Market Levy received. Receipt ID: A3F2B91C. Keep this as proof of payment.',
+      sms: 'Revo: Payment of N2,000 for Market Levy received. Receipt ID: A3F2B91C. Keep this as proof of payment.',
     },
     d: { tot: '₦127,500', mon: '₦4,210,000', ag: '3', fl: '0', fnote: 'All clear', tnote: '12 transactions today', mnote: 'Month to date', agnote: 'of 3 on roster', warn: false },
     anomaly: false, chart: true, rank: false,
@@ -67,7 +68,26 @@ const SCENES: Scene[] = [
     ],
   },
   {
-    id: 'Scene V', label: 'Anomaly flagged',
+    id: 'Scene V', label: 'Payer receives SMS',
+    story: 'A few seconds later, the trader&rsquo;s phone buzzes. <strong>Revo</strong> — the platform, not the agent — has sent her an SMS receipt with the amount, the revenue type, and a tamper-proof Receipt ID. She now holds proof of payment she can show anyone. The trail is permanent and out of the agent&rsquo;s hands.',
+    phone: 'scr-payer', tag: '',
+    payerSms: {
+      from: 'Revo',
+      carrier: 'MTN NG',
+      body: 'Revo: Payment of N2,000 for Market Levy received. Receipt ID: A3F2B91C. Keep this as proof of payment.',
+      when: '09:41 AM',
+    },
+    d: { tot: '₦127,500', mon: '₦4,210,000', ag: '3', fl: '0', fnote: 'All clear', tnote: '12 transactions today', mnote: 'Month to date', agnote: 'of 3 on roster', warn: false },
+    anomaly: false, chart: true, rank: false,
+    feed: [
+      { ok: true, who: 'Fatima Yusuf', what: 'Market Levy · A3F2B91C', amt: '₦2,000', when: '09:41' },
+      { ok: true, who: 'Emeka Obi', what: 'Business Permit · 8B41C2D9', amt: '₦18,000', when: '09:38' },
+      { ok: true, who: 'Chidi Nwosu', what: 'Street Trading · 27EA9F3B', amt: '₦3,500', when: '09:35' },
+      { ok: true, who: 'Fatima Yusuf', what: 'Signage Fee · 5C9D7A11', amt: '₦12,000', when: '09:29' },
+    ],
+  },
+  {
+    id: 'Scene VI', label: 'Anomaly flagged',
     story: 'Agent <strong>Chidi Nwosu</strong> records a <strong>₦75,000</strong> business-permit collection. Revo&rsquo;s rule is deterministic: any collection at or above <strong>₦50,000</strong> is held for manual review. No waiting for month-end audit — the commissioner sees it on the dashboard the moment it lands.',
     phone: 'scr-fraud', tag: 'CN',
     flag: { agent: 'Chidi Nwosu', type: 'Business Permit', amt: '₦75,000' },
@@ -81,7 +101,7 @@ const SCENES: Scene[] = [
     ],
   },
   {
-    id: 'Scene VI', label: 'The impact',
+    id: 'Scene VII', label: 'The impact',
     story: 'A 30% improvement in a state&rsquo;s IGR recovers <strong>₦9 billion annually</strong> — from money already being collected, just never reaching the treasury. Revo is not a payment app. It is the governance infrastructure through which Nigerian states collect what they are already owed — and citizens finally see their levies build the services they deserve.',
     phone: 'scr-impact', tag: '—',
     d: { tot: '₦202,500', mon: '₦4,285,000', ag: '3', fl: '1', fnote: '1 under review', tnote: '13 transactions · full audit trail', mnote: 'Month to date', agnote: 'of 3 on roster', warn: true },
@@ -102,7 +122,7 @@ const CHART_COLORS = ['#0C7A55', '#0C7A55', '#0C7A55', '#8C5E00', '#0C7A55', '#0
 
 const SPEEDS = [1, 1.5, 0.6];
 const SPD_LBLS = ['1× speed', '1.5× speed', '0.5× speed'];
-const DURS = [8500, 7500, 9000, 9500, 10000, 11000];
+const DURS = [8500, 7500, 9000, 9500, 8500, 10000, 11000];
 
 const RANK_ROWS = [
   { rank: 1, name: 'Emeka Obi', pct: 100, color: 'var(--emerald)', amt: '₦94,000', flagged: false },
@@ -304,14 +324,14 @@ export default function DemoPage() {
           </span>
         </div>
         <div className="pips">
-          {[0, 1, 2, 3, 4, 5].map(j => (
+          {SCENES.map((_, j) => (
             <div
               key={j}
               className={'pip' + (j === cur ? ' active' : j < cur ? ' done' : '')}
             />
           ))}
           <span className="pip-ct">
-            {String(cur + 1).padStart(2, '0')} / 06
+            {String(cur + 1).padStart(2, '0')} / {String(SCENES.length).padStart(2, '0')}
           </span>
         </div>
       </header>
@@ -327,10 +347,30 @@ export default function DemoPage() {
           <div className="lane-lbl">◈ &nbsp;Agent view · Field collection app</div>
           <div className="phone-stage">
             <div className="phone">
-              <div className="ph-bar">
-                <div className="ph-brand">REVO</div>
-                <div className="ph-id">{s.tag}</div>
-              </div>
+              {s.phone === 'scr-payer' && s.payerSms ? (
+                <div className="ph-bar ph-bar-payer">
+                  <span className="ph-carrier">{s.payerSms.carrier}</span>
+                  <span className="ph-clock">{s.payerSms.when}</span>
+                  <span className="ph-icons">
+                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden>
+                      <rect x="0" y="6" width="1.6" height="2" fill="currentColor" />
+                      <rect x="2.4" y="4" width="1.6" height="4" fill="currentColor" />
+                      <rect x="4.8" y="2" width="1.6" height="6" fill="currentColor" />
+                      <rect x="7.2" y="0" width="1.6" height="8" fill="currentColor" />
+                    </svg>
+                    <svg width="14" height="7" viewBox="0 0 14 7" fill="none" aria-hidden>
+                      <rect x="0.5" y="0.5" width="11" height="6" rx="1" stroke="currentColor" />
+                      <rect x="2" y="2" width="8" height="3" fill="currentColor" />
+                      <rect x="12" y="2" width="1.5" height="3" fill="currentColor" />
+                    </svg>
+                  </span>
+                </div>
+              ) : (
+                <div className="ph-bar">
+                  <div className="ph-brand">REVO</div>
+                  <div className="ph-id">{s.tag}</div>
+                </div>
+              )}
               <div className="ph-body">
                 {s.phone === 'scr-idle' && (
                   <div className="scr on">
@@ -421,7 +461,7 @@ export default function DemoPage() {
                       <div className="suc-title">Collection recorded</div>
                       <div className="suc-sub">SMS sent to taxpayer · {s.rec.time}</div>
                       <div className="sms-card">
-                        <div className="sms-from">REVENUEGUARD</div>
+                        <div className="sms-from">REVO</div>
                         <div className="sms-msg">{s.rec.sms}</div>
                       </div>
                       <div className="receipt-id-block">
@@ -434,6 +474,29 @@ export default function DemoPage() {
                         <div className="rr"><span className="rl">Payer</span><span className="rv">{s.rec.payer}</span></div>
                         <div className="rr"><span className="rl">Status</span><span className="rv" style={{ color: 'var(--emerald)' }}>Synced</span></div>
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {s.phone === 'scr-payer' && s.payerSms && (
+                  <div className="scr on payer-scr">
+                    <div className="payer-app-bar">
+                      <div className="payer-app-back">‹</div>
+                      <div className="payer-app-name">Messages</div>
+                      <div className="payer-app-info">⋯</div>
+                    </div>
+                    <div className="payer-contact">
+                      <div className="payer-avatar">RG</div>
+                      <div className="payer-from">{s.payerSms.from}</div>
+                      <div className="payer-num">SMS · short code</div>
+                    </div>
+                    <div className="payer-time-divider">Today · {s.payerSms.when}</div>
+                    <div className="payer-msg-bubble">{s.payerSms.body}</div>
+                    <div className="payer-msg-status">
+                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden>
+                        <polyline points="1,5 3.5,7.5 8,2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      Delivered
                     </div>
                   </div>
                 )}
@@ -739,6 +802,24 @@ const CSS = `
 .revo-demo .rl { font-size: 8px; color: var(--ink-faint); }
 .revo-demo .rv { font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 500; color: var(--ink); }
 
+.revo-demo .ph-bar-payer { background: #2a2a2a; color: rgba(255,255,255,0.85); padding: 9px 14px 7px; font-family: 'Inter', sans-serif; font-size: 9px; letter-spacing: 0.04em; }
+.revo-demo .ph-bar-payer .ph-carrier { font-weight: 600; }
+.revo-demo .ph-bar-payer .ph-clock { font-variant-numeric: tabular-nums; }
+.revo-demo .ph-bar-payer .ph-icons { display: inline-flex; align-items: center; gap: 5px; color: rgba(255,255,255,0.85); }
+.revo-demo .payer-scr { padding-top: 2px; }
+.revo-demo .payer-app-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 9px; border-bottom: 1px solid var(--border); margin: -3px -3px 9px; padding-left: 3px; padding-right: 3px; }
+.revo-demo .payer-app-back { font-size: 18px; line-height: 1; color: var(--sapphire); font-weight: 300; }
+.revo-demo .payer-app-name { font-size: 11px; font-weight: 600; color: var(--ink); }
+.revo-demo .payer-app-info { font-size: 14px; color: var(--ink-faint); letter-spacing: 0.05em; }
+.revo-demo .payer-contact { display: flex; flex-direction: column; align-items: center; padding: 4px 0 11px; border-bottom: 1px solid var(--border); margin-bottom: 11px; }
+.revo-demo .payer-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--gold); color: var(--white); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.05em; margin-bottom: 6px; box-shadow: 0 2px 6px rgba(184,151,58,0.25); }
+.revo-demo .payer-from { font-size: 11.5px; font-weight: 600; color: var(--ink); }
+.revo-demo .payer-num { font-size: 7.5px; color: var(--ink-faint); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.07em; text-transform: uppercase; margin-top: 1px; }
+.revo-demo .payer-time-divider { text-align: center; font-size: 8px; color: var(--ink-faint); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.07em; margin-bottom: 9px; text-transform: uppercase; }
+.revo-demo .payer-msg-bubble { background: var(--canvas2); color: var(--ink); padding: 9px 12px; border-radius: 14px 14px 14px 4px; font-size: 10px; line-height: 1.55; max-width: 88%; margin-right: auto; animation: sms-arrive 0.55s cubic-bezier(.2,1.4,.4,1) both; box-shadow: 0 1px 2px rgba(13,27,42,0.05); }
+@keyframes sms-arrive { from { opacity: 0; transform: translateY(10px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.revo-demo .payer-msg-status { display: flex; align-items: center; gap: 3px; font-size: 7.5px; color: var(--emerald); margin-top: 5px; padding-left: 4px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.07em; text-transform: uppercase; animation: status-fade 0.4s 0.5s ease both; opacity: 0; }
+@keyframes status-fade { to { opacity: 1; } }
 .revo-demo .fraud { text-align: center; padding: 8px 0 6px; }
 .revo-demo .fraud-ring { width: 46px; height: 46px; border-radius: 50%; background: var(--am-bg); border: 1.5px solid var(--am-line); display: flex; align-items: center; justify-content: center; font-size: 19px; margin: 0 auto 8px; animation: pulse-ring 1.5s ease infinite; }
 @keyframes pulse-ring { 0%, 100% { box-shadow: 0 0 0 0 rgba(140,94,0,0.3); } 60% { box-shadow: 0 0 0 8px rgba(140,94,0,0); } }

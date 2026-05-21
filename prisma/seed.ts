@@ -14,7 +14,7 @@ async function main() {
 
   await prisma.admin.create({
     data: {
-      email:    'admin@revenueguard.ng',
+      email:    'admin@revo.ng',
       password: await bcrypt.hash('admin123', 10),
     },
   });

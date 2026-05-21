@@ -37,7 +37,7 @@ function downloadCsv(filename: string, rows: string[][]) {
 export default function Topbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const title = TITLES[pathname] ?? "RevenueGuard";
+  const title = TITLES[pathname] ?? "Revo";
   const isDashboard = pathname === "/dashboard";
 
   const exportToday = async () => {
@@ -60,7 +60,7 @@ export default function Topbar() {
       c.receiptRef,
     ]);
     downloadCsv(
-      `revenueguard-${new Date().toISOString().slice(0, 10)}.csv`,
+      `revo-${new Date().toISOString().slice(0, 10)}.csv`,
       [header, ...rows],
     );
   };

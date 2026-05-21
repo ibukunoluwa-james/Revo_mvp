@@ -165,7 +165,7 @@ export default function LoginPage() {
               <FormField label="Email address">
                 <input
                   type="email"
-                  placeholder="admin@revenueguard.ng"
+                  placeholder="admin@revo.ng"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="field-input"

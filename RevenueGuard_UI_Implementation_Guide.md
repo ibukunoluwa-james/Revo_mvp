@@ -1,4 +1,4 @@
-# RevenueGuard — UI Implementation Guide
+# Revo — UI Implementation Guide
 
 > How each screen is structured, what each component does, and exactly how to build it in Next.js + Tailwind.
 
@@ -59,7 +59,7 @@ The sidebar is `210px` wide, `background-rg-navy`, and never scrolls. It has fou
 // components/Sidebar.tsx
 <div className="px-5 py-5 border-b border-white/[0.07]">
   <p className="text-rg-gold font-medium text-[14px] tracking-wide">
-    RevenueGuard
+    Revo
   </p>
   <p className="text-white/35 text-[11px] mt-0.5 uppercase tracking-widest">
     {context}  {/* "Field agent portal" or "Anambra State IRS" */}
@@ -202,7 +202,7 @@ The outer wrapper is `min-h-screen flex items-center justify-center bg-rg-page`.
 ```tsx
 <div className="bg-rg-navy p-10 flex flex-col justify-between">
   <div>
-    <p className="text-rg-gold font-medium text-lg tracking-wide">RevenueGuard</p>
+    <p className="text-rg-gold font-medium text-lg tracking-wide">Revo</p>
     <p className="text-white/35 text-[11px] uppercase tracking-widest mt-1">
       Revenue intelligence platform
     </p>
@@ -705,4 +705,4 @@ Gold, teal, and orange values must use the dark stop of each colour when placed 
 
 ---
 
-*RevenueGuard UI Implementation Guide — James Ibukunoluwa | Covenant University | 2026*
+*Revo UI Implementation Guide — James Ibukunoluwa | Covenant University | 2026*

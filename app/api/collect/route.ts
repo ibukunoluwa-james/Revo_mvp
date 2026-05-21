@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     });
 
     const smsText =
-      `RevenueGuard: Payment of N${amountNaira} for ${streamName} received. ` +
+      `Revo: Payment of N${amountNaira} for ${streamName} received. ` +
       `Receipt ID: ${collection.receiptRef.slice(0, 8).toUpperCase()}. ` +
       `Keep this as proof of payment.`;
 

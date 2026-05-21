@@ -1,4 +1,4 @@
-# RevenueGuard — MVP Build Instructions
+# Revo — MVP Build Instructions
 
 > Build time: 5 days  
 > Stack: Next.js 14 · PostgreSQL · Prisma · Termii SMS · Vercel · Supabase
@@ -32,14 +32,14 @@ Install these before you start:
 ### 1.1 Create the Next.js app
 
 ```bash
-npx create-next-app@latest revenueguard \
+npx create-next-app@latest revo \
   --typescript \
   --tailwind \
   --app \
   --no-src-dir \
   --import-alias "@/*"
 
-cd revenueguard
+cd revo
 ```
 
 ### 1.2 Install dependencies
@@ -150,7 +150,7 @@ async function main() {
   // Create admin account
   await prisma.admin.create({
     data: {
-      email:    'admin@revenueguard.ng',
+      email:    'admin@revo.ng',
       password: await bcrypt.hash('admin123', 10),
     },
   });
@@ -258,7 +258,7 @@ export async function POST(req: NextRequest) {
 
     // Send SMS to taxpayer — fire and forget
     const smsText =
-      `RevenueGuard: Payment of N${amountNaira} for ${streamName} received. ` +
+      `Revo: Payment of N${amountNaira} for ${streamName} received. ` +
       `Receipt ID: ${collection.receiptRef.slice(0, 8).toUpperCase()}. ` +
       `Keep this as proof of payment.`;
 
@@ -565,7 +565,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">RevenueGuard</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">Revo</h1>
         <p className="text-gray-500 text-sm mb-6">Nigeria's revenue collection platform</p>
 
         {/* Tab toggle */}
@@ -740,7 +740,7 @@ export default function DashboardPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">RevenueGuard</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Revo</h1>
           <p className="text-gray-500 text-sm">
             {new Date().toLocaleDateString('en-NG', {
               weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -865,7 +865,7 @@ Run through this checklist:
 - [ ] Agent tab: log in with phone `08012345671` and PIN `1234`
 - [ ] Collect page loads, submit a test collection
 - [ ] Receipt screen appears with a receipt ID
-- [ ] Admin tab: log in with `admin@revenueguard.ng` / `admin123`
+- [ ] Admin tab: log in with `admin@revo.ng` / `admin123`
 - [ ] Dashboard shows the test collection you just created
 - [ ] Dashboard auto-refreshes every 30 seconds
 
@@ -885,7 +885,7 @@ TERMII_API_KEY      → your Termii API key
 TERMII_SENDER_ID    → REVGUARD
 ```
 
-After deploy, Vercel gives you a URL like `revenueguard.vercel.app`. That is your live app.
+After deploy, Vercel gives you a URL like `revo.vercel.app`. That is your live app.
 
 ### 5.4 Test on a real phone
 
@@ -915,7 +915,7 @@ Open the Vercel URL on an Android phone. Log in as an agent. Record a collection
 | Field Agent 1 | 08012345671 | PIN: 1234 |
 | Field Agent 2 | 08012345672 | PIN: 1234 |
 | Field Agent 3 | 08012345673 | PIN: 1234 |
-| State Admin | admin@revenueguard.ng | admin123 |
+| State Admin | admin@revo.ng | admin123 |
 
 **Change these before any real usage.**
 
@@ -934,4 +934,4 @@ Once the demo is working and you have a state government interested:
 
 ---
 
-*RevenueGuard MVP — James Ibukunoluwa | Covenant University | 2026*
+*Revo MVP — James Ibukunoluwa | Covenant University | 2026*

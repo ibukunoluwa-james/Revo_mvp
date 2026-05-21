@@ -105,7 +105,7 @@ Created by `prisma/seed.ts`. **Change these before any real usage.**
 | Field agent | `08012345671`           | PIN `1234`  |
 | Field agent | `08012345672`           | PIN `1234`  |
 | Field agent | `08012345673`           | PIN `1234`  |
-| State admin | `admin@revenueguard.ng` | `admin123`  |
+| State admin | `admin@revo.ng` | `admin123`  |
 
 ## Scripts
 
